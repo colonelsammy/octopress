@@ -5,7 +5,7 @@ date: 2013-09-24 07:45
 comments: false
 categories: [octopress, ruby]
 keywords: ruby, octopress, redcarpet, github, mingw, windows
-description: How to install Octopress with Redcarpet and Gitgub syntax highlighting with Mingw on Windows
+description: Plans, homage to Matt Gemmell
 ---
 
 For some time now I've been planning to write a blog; I'd seen [Matt Gemmell's "Blogging with Octopress"](http://mattgemmell.com/2011/09/12/blogging-with-octopress/ "Matt Gemmell: Blogging with Octopress") and [his new site design](http://mattgemmell.com/2013/05/10/a-new-site-design/ "New site design"). As a geeky software developer, that looked like just what I wanted. The only problem was getting it installed and setup just how I wanted it; I don't yet have a Mac and I'd tried various Linux flavours without much success.
