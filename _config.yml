@@ -5,7 +5,7 @@
 url: http://graoil.co.uk
 title: A software Author's Website
 subtitle: Some thoughts about code.
-author: Malcolm Noyes
+author: Graoil Limited
 simple_search: http://google.com/search
 description: C++
 
@@ -33,12 +33,16 @@ destination: public
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
-markdown: rdiscount
+markdown: redcarpet
 rdiscount:
   extensions:
     - autolink
     - footnotes
     - smart
+
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
+
 pygments: false # default python pygments have been replaced by pygments.rb
 
 paginate: 10          # Posts per page on the blog index
