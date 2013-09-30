@@ -8,6 +8,7 @@ keywords: ruby, octopress, redcarpet, github, mingw, windows
 description: How to install Octopress with Redcarpet and Gitgub syntax highlighting with Mingw on Windows
 ---
 
+This is the third of three posts describing how to install Ruby 1.9.3 native MingW environment.  If you're wondering why I did this, I wanted to use redcarpet/github-linguist for markdown in Octopress; there's a dependency on the charlock_holmes Gem that requires native code libraries (file, ICU), some of which it needs to build.  I couldn't figure out how to make the Ruby Installer do this and I wanted to understand the process, so I did the whole thing from scratch.  The [first part is here]({% post_url 2013-09-24-setting-up-mingw %}) and [the second part is here]({% post_url 2013-09-26-installing-ruby-in-windows %}).
 
 [Setup ruby.]({% post_url 2013-09-26-installing-ruby-in-windows %} "Installing ruby in Windows")
 In the build location (/build32 if following the instructions)...
