@@ -8,7 +8,9 @@ keywords: ruby, mingw, windows
 description: How to install ruby 1.9.3 with Mingw on Windows
 ---
 
-This is the second of three posts describing how to install Ruby 1.9.3 native MingW environment.  If you 're wondering why I did this, I wanted to use redcarpet/github-linguist for markdown in Octopress; there's a dependency on the charlock_holmes Gem that requires native code libraries (file, ICU), some of which it needs to build.  I couldn't figure out how to make the Ruby Installer do this and I wanted to understand the process, so I did the whole thing from scratch.  The [first part is here]({% post_url 2013-09-24-setting-up-mingw %}) and [the final part is here]({% post_url 2013-09-27-installing-octopress-in-windows-with-redcarpet %}).
+This is the second of three posts describing how to install Ruby 1.9.3 native MingW environment. It's much simpler to [use Ruby Installer to do this]({% post_url 2013-09-30-using-rubyinstaller-to-install-redcarpet-with-octopress-on-windows %}) but if you want all the details of how to do it natively, read on...
+
+If you 're wondering why I did this, I wanted to use redcarpet/github-linguist for markdown in Octopress; there's a dependency on the charlock_holmes Gem that requires native code libraries (file, ICU), some of which it needs to build.  I couldn't figure out how to make the Ruby Installer do this and I wanted to understand the process, so I did the whole thing from scratch.  The [first part is here]({% post_url 2013-09-24-setting-up-mingw %}) and [the final part is here]({% post_url 2013-09-27-installing-octopress-in-windows-with-redcarpet %}).
 
 [Setup Msys base system.]({% post_url 2013-09-24-setting-up-mingw %} "Mingw base system")
 

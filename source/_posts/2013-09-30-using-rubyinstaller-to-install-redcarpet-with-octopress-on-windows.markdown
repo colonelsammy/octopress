@@ -1,31 +1,86 @@
 ---
 layout: post
-title: "Installing Ruby 1.9.3 in Windows with Redcarpet and Github Markdown"
-date: 2013-09-27 17:32
+title: "Using Ruby Installer to install Redcarpet and Github-linguist with Octopress on Windows"
+date: 2013-09-30 17:32
 comments: false
-categories: [octopress, ruby, mingw, windows]
-keywords: ruby, octopress, redcarpet, github, mingw, windows
-description: How to install Octopress with Redcarpet and Gitgub syntax highlighting with Mingw on Windows
+unpublished: true
+categories: [octopress, ruby, mingw, markdown, windows]
+keywords: ruby, octopress, redcarpet, github, markdown, mingw, windows
+description: Using Ruby Installer to install Redcarpet and Github-linguist syntax highlighting with Octopress on Windows
 ---
 
-This is the third of three posts describing how to install Ruby 1.9.3 native MingW environment. It's much simpler to [use Ruby Installer to do this]({% post_url 2013-09-30-using-rubyinstaller-to-install-redcarpet-with-octopress-on-windows %}) but if you want all the details of how to do it natively, read on...
+This article follows three posts describing how to install Ruby 1.9.3 to use Octopress with redcarpet and github-linguist in a native MingW environment; using what I learnt in that process I've figured out how to use the Ruby Installer for Windows to do the same thing - this post describes how to do that.  I plan to leave the original posts ([starting here]({% post_url 2013-09-24-setting-up-mingw %})) in case they may provide inspiration for someone else with similar ambitions.
 
-If you're wondering why I did this, I wanted to use redcarpet/github-linguist for markdown in Octopress; there's a dependency on the charlock_holmes Gem that requires native code libraries (file, ICU), some of which it needs to build.  I couldn't figure out how to make the Ruby Installer do this and I wanted to understand the process, so I did the whole thing from scratch.  The [first part is here]({% post_url 2013-09-24-setting-up-mingw %}) and [the second part is here]({% post_url 2013-09-26-installing-ruby-in-windows %}).
+I wanted to use redcarpet/github-linguist for markdown in Octopress, however there's a dependency on the charlock_holmes Gem that requires native code libraries (file, ICU), some of which it needs to build.  It turns out that we *can* do this with Ruby Installer
 
-[Setup ruby.]({% post_url 2013-09-26-installing-ruby-in-windows %} "Installing ruby in Windows")
-In the build location (/build32 if following the instructions)...
+# First, install Ruby... #
 
-First, install Python 2.7, if you havn't already - this is required for pygments.rb.  Make sure Python is in your path.  Check in a Mingw window:
+Install and install ruby 1.9.3 ([from rubyinstaller.org](http://rubyinstaller.org/downloads/ "Ruby installer downloads"))
+Download the devkit ([current version here](https://github.com/downloads/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe ""))
+Unpack dev kit, e.g. into C:\Ruby193\devkit
+Setup the Ruby installation to work with the devkit:
+```
+ruby dk.rb init
+ruby dk.rb install
+```
+All of this follows the regular instructions for installing Ruby and the devkit.
+
+# Install Python 2.7 #
+Next, install Python 2.7, if you havn't already - this is required for pygments.rb.  Make sure Python is in your path.  Check in a Mingw window:
 
 ```
 python --version
 ```
 
+# Additional tools for devkit #
+For some reason, the devkit doesn't come with tar, zip & patch so install these from MingW downloads. I used 7-zip to unpack the wget and xz and then used the binaries of those tools to get the rest; if you want you can just download the missing tools and unpack them with 7-zip, then copy the binaries manually.
+
+If you want to use MingW, first you need to download and unpack xz, wget and dlls for openssl and liblzma; [download wget from here](http://sourceforge.net/projects/mingw/files/MSYS/Extension/wget/wget-1.12-1/wget-1.12-1-msys-1.0.13-bin.tar.lzma/download) , [xz from here](http://sourceforge.net/projects/mingw/files/MSYS/Base/xz/xz-5.0.3-1/xz-5.0.3-1-msys-1.0.17-bin.tar.lzma/download), [openssl dlls from here](http://sourceforge.net/projects/mingw/files/MSYS/Extension/openssl/openssl-1.0.0-1/libopenssl-1.0.0-1-msys-1.0.13-dll-100.tar.lzma/download) and [liblzma dlls from here](http://sourceforge.net/projects/mingw/files/MSYS/Base/xz/xz-5.0.3-1/liblzma-5.0.3-1-msys-1.0.17-dll-5.tar.lzma/download). Unpack them all with 7-zip (unpack the tar files as well) and copy the binaries to the bin, etc and lib directories of your devkit (copying with Windows Explorer is fine).
+
+Start the devkit using the msys.bat file located in the devkit root and check that they installed:
+```
+$ wget --version
+GNU Wget 1.12 built on msys.
+...
+$ xz --version
+xz (XZ Utils) 5.0.3
+liblzma 5.0.3
+``` 
+Now you should be able to use MingW/MSYS to download and install the missing tools; create a temporary directory to unpack the files into and copy the files:
+```
+cd ~
+mkdir tmp
+cd tmp
+wget http://sourceforge.net/projects/mingw/files/MSYS/Base/tar/tar-1.22-1/tar-1.22-1-msys-1.0.11-bin.tar.lzma
+xz -d tar-1.22-1-msys-1.0.11-bin.tar.lzma
+tar xvf tar-1.22-1-msys-1.0.11-bin.tar
+wget http://sourceforge.net/projects/mingw/files/MSYS/Extension/zip/zip-3.0-1/zip-3.0-1-msys-1.0.14-bin.tar.lzma
+xz -d zip-3.0-1-msys-1.0.14-bin.tar.lzma
+tar xvf zip-3.0-1-msys-1.0.14-bin.tar
+wget http://sourceforge.net/projects/mingw/files/MSYS/Extension/unzip/unzip-6.0-1/unzip-6.0-1-msys-1.0.13-bin.tar.lzma
+xz -d unzip-6.0-1-msys-1.0.13-bin.tar.lzma
+tar xvf unzip-6.0-1-msys-1.0.13-bin.tar
+wget http://sourceforge.net/projects/mingw/files/MSYS/Extension/patch/patch-2.5.9-1/patch-2.5.9-1-msys-1.0.11-bin.tar.lzma
+xz -d patch-2.5.9-1-msys-1.0.11-bin.tar.lzma
+tar xvf patch-2.5.9-1-msys-1.0.11-bin.tar
+wget http://sourceforge.net/projects/mingw/files/MSYS/Base/gzip/gzip-1.3.12-1/gzip-1.3.12-1-msys-1.0.11-bin.tar.lzma
+xz -d gzip-1.3.12-1-msys-1.0.11-bin.tar.lzma
+tar xvf gzip-1.3.12-1-msys-1.0.11-bin.tar
+cp -r -v bin /
+cp -r -v share /
+cd .. 
+```
+Now we're ready to install the dependencies for the charlock_holmes Gem...
+
+# Build native libraries #
+
 We need some additional libraries for the Ruby Gem charlock_holmes.  I've built them both with static linking here so that we don't need to worry about where the DLLs might have gone.
  
 Download and build ICU ([this post on compiling for qt](http://qt-project.org/wiki/Compiling-ICU-with-MinGW "Compiling ICU with Mingw") and [this post for compiling for OpenTTD](http://wiki.openttd.org/Compiling_on_Windows_using_MinGW "Compiling for OpenTTD") both help):
 ```
-cd /build32
+cd ~
+mkdir build32
+cd ~/build32
 wget http://download.icu-project.org/files/icu4c/4.6/icu4c-4_6-src.zip
 unzip icu4c-4_6-src.zip
 wget http://devs.openttd.org/~terkhen/libicu/libicu_4_6_mingw32.diff
@@ -42,7 +97,7 @@ cd ../..
 
 Download and install libgnurx (required for file-5.08, also a dependency of charlock_holmes):
 ```
-cd /build32
+cd ~/build32
 wget http://sourceforge.net/projects/mingw/files/Other/UserContributed/regex/mingw-regex-2.5.1/mingw-libgnurx-2.5.1-src.tar.gz
 tar zxvf mingw-libgnurx-2.5.1-src.tar.gz
 cd mingw-libgnurx-2.5.1
@@ -87,28 +142,31 @@ Apply the following patch for static build:
 ```
 Build and install:
 ```
-patch < ../mingw-libgnurx-static.patch
+patch -i ../mingw-libgnurx-static.patch
 ./configure -prefix=/mingw
 make && make install-static
 ```
 Optional: check that file-5.08 builds (note: **no make install**) without errors:
 ```
-cd /build32
+cd ~/build32
 wget ftp://ftp.astron.com/pub/file/file-5.08.tar.gz
 tar zxvf file-5.08.tar.gz
 cd file-5.08
 ./configure --prefix=/mingw  --disable-shared --enable-static --with-pic
 make
 ```
-Download Octopress ([see also Octopress setup instructions](http://octopress.org/docs/setup/ "Octopress setup")).  The easiest way to do this is to first install Git for Windows.  Start Git Bash, and then (note: this example uses /build32 but you can put octopress where you like...):
+
+# Install Octopress #
+
+Download Octopress ([see also Octopress setup instructions](http://octopress.org/docs/setup/ "Octopress setup")).  The easiest way to do this is to first install Git for Windows.  Start Git Bash, and then (note: this example uses ~/build32 but you can put octopress where you like...):
 ```
-cd /c/mingw/build32
+cd /c/Ruby193/devkit/home/[user]/build32/
 git clone git://github.com/imathis/octopress.git octopress
 ```
 
 At this stage (back in MingW build environment):
 ```
-cd /build32/octopress
+cd ~/build32/octopress
 $ gem list
 
 *** LOCAL GEMS ***
@@ -142,15 +200,28 @@ Then install the default bundle:
 ```
 bundle install
 ```
-Update the Gemfile to install pygments 0.3.7 - this is required so that we have the updated lexer Augeas:
+Install the default Octopress theme, create a new test page and generate the site:
+```
+rake install
+rake new_post["first post"]
+rake generate
+```
+You should get the site built in octopress/public.  Check that index.html is generated properly (size > 0).
+
+At this point we have the default Octopress installed using rdiscount for markdown generation and we've setup the required libraries for redcarpet.  Now we need to install charlock_holmes manually:
+
+## Install some updates required for github-linguist ##
+
+Update the Gemfile to install pygments 0.3.7 - this is required so that we have the updated lexer Augeas (part contents of Gemfile):
 ```
 gem 'pygments.rb', '~> 0.3.7'
 ```
 and update the bundle:
 ```
 bundle update pygments.rb
+gem install rake-compiler
 ```
-Now it should look like this:
+Now it should look something like this:
 ```
 $ bundle list
 Gems included by the bundle:
@@ -201,61 +272,15 @@ Create a patch file for pygments.rb:
 
 Now apply the patch to popen.rb in pygments.rb:
 ```
-cd /local32/lib/ruby/gems/1.9.1/gems/pygments.rb-0.3.7/lib/pygments
-patch -u -i /build32/pygments.rb.popen.rb.patch
-cd /build32/octopress
+cd ~/local32/lib/ruby/gems/1.9.1/gems/pygments.rb-0.3.7/lib/pygments
+patch -u -i ~/build32/pygments.rb.popen.rb.patch
+cd ~/build32/octopress
 ```
-Create a file named 'rake' in /local32/bin.  This looks like the central section of rake.bat:
+
+## Get and patch charlock_holmes ##
 ```
-#!C:/mingw/local32/bin/ruby
-
-#--
-# Copyright (c) 2003, 2004, 2005, 2006, 2007  Jim Weirich
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#++
-
-begin
-  require 'rubygems'
-rescue LoadError
-end
-
-require 'rake'
-
-Rake.application.run
-__END__
-
-```
-Install the default Octopress theme, create a new test page and generate the site:
-```
-rake install
-rake new_post["first post"]
-rake generate
-```
-You should get the site built in octopress/public.  Check that index.html is generated properly (size > 0).
-
-At this point we have the default Octopress installed using rdiscount for markdown generation and we've setup the required libraries for redcarpet.  Now we need to install charlock_holmes manually:
-
-```
-gem install rake-compiler
-mkdir /build32/tmp
-cd /build32/tmp
+mkdir ~/build32/tmpgems
+cd ~/build32/tmpgems
 gem fetch charlock_holmes
 gem spec charlock_holmes-0.6.9.4.gem --ruby > charlock_holmes.gemspec
 gem unpack charlock_holmes-0.6.9.4.gem
@@ -345,10 +370,14 @@ stringex (1.4.0)
 syntax (1.0.0)
 tilt (1.3.7)
 yajl-ruby (1.1.0 x86-mingw32)
-cd /build32/octopress
 ```
 
-Now we can modify the Gemfile to include redcarpet:
+## Add redcarpet to Octopress ##
+```
+cd ~/build32/octopress
+```
+
+Now we can modify the Gemfile to include redcarpet (part contents of Gemfile):
 ```
   gem 'rdiscount', '~> 2.0.7'
   gem "charlock_holmes", "~> 0.6.9.4"
@@ -358,7 +387,7 @@ Now we can modify the Gemfile to include redcarpet:
 ```
 And update the Gems:
 ```
-cd /build32/octopress
+cd ~/build32/octopress
 bundle install
 ```
 
@@ -416,7 +445,7 @@ redcarpet:
   extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
 ```
 
-Modify the post created above to include some github markdown, e.g. (note: replace last [backtick]...):
+Modify the 'frist post' created above to include some github markdown, e.g. (note: replace last [backtick]...):
 ```
 Some text
 ```c++
@@ -433,4 +462,11 @@ And regenerate:
 ```
 rake generate
 ```
-You should now have syntax highlighted code blocks!
+You should now have syntax highlighted code blocks, like this:
+
+```c++
+int main()
+{
+  return 0;
+}
+```
