@@ -3,11 +3,13 @@ layout: post
 title: "Compile time FizzBuzz without Boost"
 date: 2013-10-09 05:53
 comments: false
-categories: [c++, templates, fizzbuzz]
-keywords: c++, templates, fizzbuzz, boost
+categories: [c++, templates, fizzbuzz, metaprogramming]
+keywords: c++, templates, fizzbuzz, boost, metaprogramming, mpl
 description: How to deconstruct compile time FizzBuzz without using Boost 
 ---
-Several years ago [Adam Peterson published an article on how to implement FizzBuzz at cmpile time in C++](http://www.adampetersen.se/articles/fizzbuzz.htm "Adam Petersen's FizzBuzz"). The code was clever, but had a dependency on Boost and didn't go into great detail on how it worked, so I thought I'd write it again, from scratch and try to explain my workings.  I'm only going to show examples that would work for very small FizzBuzz sequences because, well, this is a learning exercise not a typing exercise! 
+Several years ago [Adam Peterson published an article on how to implement FizzBuzz at cmpile time in C++](http://www.adampetersen.se/articles/fizzbuzz.htm "Adam Petersen's FizzBuzz"). The code was clever, but had a dependency on Boost and didn't go into great detail on how it worked, so I thought I'd write it again from scratch and try to explain my workings.  In this article I'm only going to show examples that would work for very small FizzBuzz sequences because, well, this is a learning exercise not a typing exercise!
+
+At the end of this article you'll find the source that I used to run the examples below - up to 16 items in the sequence. Much of what follows is a variation on the code in chapter 5 of [C++ Template Metaprogramming](http://www.amazon.co.uk/Template-Metaprogramming-Concepts-Techniques-Beyond/dp/0321227255/ref=sr_1_1?ie=UTF8&qid=1381403602&sr=8-1&keywords=c%2B%2B+template+metaprogramming "C++ Template Metaprogramming"), in particular the use of mpl::vector and the 'tiny' sequence.
 
 # First, get an error message #
 
@@ -26,23 +28,23 @@ struct vector
     typedef T3 T3;
 };
 ```
-When we compile this with VS2010, we get this:
+This is a simplified version of the mpl::vector example from C++ Template Metaprogramming. In particular note the typedef for 'self' and the typedefs for template parameters; we'll be using these in our helper templates. When we compile this with VS2010, we get this:
 
 ```
 1>ClCompile:
 1>  main.cpp
-1>c:\projects\boost_any_example\main.cpp(243): error C2039: 'compilation_error_here' : is not a member of 'fizzbuzz::vector<T0,T1,T2>'
+1>c:\projects\fizzbuzz_example\main.cpp(243): error C2039: 'compilation_error_here' : is not a member of 'vector<T0,T1,T2>'
 1>          with
 1>          [
 1>              T0=int,
 1>              T1=long,
 1>              T2=double
 1>          ]
-1>c:\projects\boost_any_example\main.cpp(243): error C2146: syntax error : missing ';' before identifier 'res'
-1>c:\projects\boost_any_example\main.cpp(243): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-1>c:\projects\boost_any_example\main.cpp(243): error C2065: 'res' : undeclared identifier
+1>c:\projects\fizzbuzz_example\main.cpp(243): error C2146: syntax error : missing ';' before identifier 'res'
+1>c:\projects\fizzbuzz_example\main.cpp(243): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+1>c:\projects\fizzbuzz_example\main.cpp(243): error C2065: 'res' : undeclared identifier
 ```
-This is promising; it displays the types that we puit in, and in the right order.  That's fine, but the compiler works with types and we need to display numeric values, so we need a helper to convert intergers to types. [Loki](http://loki-lib.sourceforge.net/ "Loki library") calls this Int2Type and [Boost.MPL](http://www.boost.org/doc/libs/1_54_0/libs/mpl/doc/index.html "Boost.MPL") has mpl::int_ that does the same thing, but it's really easy to implement:
+This is promising; it displays the types that we put in, and in the right order.  That's fine, but the compiler works with types and we need to display numeric values, so we need a helper to convert intergers to types. [Loki](http://loki-lib.sourceforge.net/ "Loki library") calls this `Int2Type` and [Boost.MPL](http://www.boost.org/doc/libs/1_54_0/libs/mpl/doc/index.html "Boost.MPL") has `mpl::int_` that does the same thing, but it's really easy to implement:
 
 ```c++
 template <int N>
@@ -51,7 +53,7 @@ struct int_
     static const int value = N;
 };
 ```
-For each distinct value 'N', this template creates a distinct type, so int_<0> is a different type from int_<1> etc.
+For each distinct value 'N', this template creates a distinct type, so `int_<0>` is a different type from `int_<1>` etc.
 
 Now we can put this into our 'error' template:
 
@@ -61,20 +63,22 @@ typedef vector<int_<0>,int_<1>,int_<2> >::compilation_error_here res;
 and we get error output with increasing numeric values, which is what we want:
 
 ```
-1>c:\projects\boost_any_example\main.cpp(250): error C2039: 'compilation_error_here' : is not a member of 'fizzbuzz::vector<T0,T1,T2>'
+1>c:\projects\fizzbuzz_example\main.cpp(250): error C2039: 'compilation_error_here' : is not a member of 'vector<T0,T1,T2>'
 1>          with
 1>          [
-1>              T0=fizzbuzz::int_<0>,
-1>              T1=fizzbuzz::int_<1>,
-1>              T2=fizzbuzz::int_<2>
+1>              T0=int_<0>,
+1>              T1=int_<1>,
+1>              T2=int_<2>
 1>          ]
 ```
 
 # Now generate the sequence... #
 
-That's fine, but now we need to generate the sequence (this largely follows the implementation of only those required bits of the 'tiny' sequence in chapter 5 of [C++ Template Metaprogramming](http://www.amazon.co.uk/Template-Metaprogramming-Concepts-Techniques-Beyond/dp/0321227255/ref=sr_1_1?ie=UTF8&qid=1381403602&sr=8-1&keywords=c%2B%2B+template+metaprogramming "C++ Template Metaprogramming")).
+That's fine, but now we need to generate the sequence.
 
-To get a new sequence, we have to append a new type (int_<1>) to an existing sequence (int_<0>). We can only do that if we know how big our current sequence is, so we first need to specialize our template for every possible size of sequence (this is why we're only working with small sequences!). Note that the size is derived from the helper template that we defined earlier so that we can get the 'value':
+To get a new sequence, we have to append a new type (e.g. `int_<1>`) to an existing sequence (`int_<0>`). Loki uses typelists that we could just append to but here we're modelling our sequence on `mpl::vector` so we need to do more work.
+
+We can only do that if we know how big our current sequence is, so we first need to specialize our template for every possible size of sequence (this is why we're only working with small sequences!). This is a very much simplified version of the code in C++ Template Metaprogramming, in particular I've not implemented 'apply' metafunctions to make it clearer what's going on. Note that here the size is derived from the `int_<>` helper template that we defined earlier so that we can get the 'value' later:
 
 ```c++
 template <class T0, class T1, class T2, class T3>
@@ -98,7 +102,8 @@ struct size : size_impl<typename Sequence::T0, typename Sequence::T1
 {};
 
 ```
- and now we can append a new type to another:
+
+For an existing length, the 'size' template will select the 'best' specialisation of the size_impl template and add the new type as the last parameter. So now we can append a new type to another:
 
 ```c++
 template <class Sequence, class T, int N>
@@ -131,6 +136,8 @@ struct push_back
 
 ```
 
+The same idea applies here; we use the push_back template to select the most appropriate push_back_impl template for the existing size. Note that we're not checking that the sequence is already full; this shouldn't be a problem with our limited use case for this example.
+
 Now we can use the recursive parts of Adam's RunFizzBuzz to generate our sequence:
 
 ```c++
@@ -153,10 +160,12 @@ int main()
 }
 ```
 
+In this case the compiler will use the primary template and will recursively subtract 1 from the number and then instantiate itself until the number gets to zero, when it will use the specialisation for '0' to terminate the sequence.
+
 which gives us:
 
 ```
-1>c:\projects\boost_any_example\main.cpp(306): error C2039: 'compilation_error_here' : is not a member of 'vector<T0,T1,T2,T3>'
+1>c:\projects\fizzbuzz_example\main.cpp(306): error C2039: 'compilation_error_here' : is not a member of 'vector<T0,T1,T2,T3>'
 1>          with
 1>          [
 1>              T0=int_<0>,
@@ -170,7 +179,7 @@ That looks a lot like what we want, but so far we havn't output Fizz or Buzz; we
 
 # Selecting Fizz #
 
-if_c is a fairly simple type selection template that works by specializing for one value of the condition:
+We need to select a different type (`Fizz`) if the number is divisible by 3. This calculation is a compile time constant for each template instantiation, so we can use it as a parameter to a template; `if_c` is a fairly simple type selection template that works by specializing for one value of the condition (in this case 'false'):
 
 ```c++
 template <class T1, class T2, bool c>
@@ -212,7 +221,7 @@ struct RunFizzBuzz<0>
 , which produces:
 
 ```
-1>c:\projects\boost_any_example\main.cpp(327): error C2039: 'compilation_error_here' : is not a member of 'vector<T0,T1,T2,T3>'
+1>c:\projects\fizzbuzz_example\main.cpp(327): error C2039: 'compilation_error_here' : is not a member of 'vector<T0,T1,T2,T3>'
 1>          with
 1>          [
 1>              T0=int_<0>,
@@ -224,7 +233,7 @@ struct RunFizzBuzz<0>
 
 which is exactly what we want!
 
-Adding the additonal conditions for Buzz and FizzBuzz is trivial (as long as we remember to test for FizzBuzz first!):
+Adding the additional conditions for Buzz and FizzBuzz is trivial (as long as we remember to test for FizzBuzz in the right place!):
 
 ```
 struct Fizz{};
@@ -249,7 +258,7 @@ struct RunFizzBuzz<0>
 ```
 
 ```
-1>c:\projects\boost_any_example\main.cpp(305): error C2039: 'compilation_error_here' : is not a member of 'vector<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15>'
+1>c:\projects\fizzbuzz_example\main.cpp(305): error C2039: 'compilation_error_here' : is not a member of 'vector<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15>'
 1>          with
 1>          [
 1>              T0=int_<0>,
@@ -271,7 +280,7 @@ struct RunFizzBuzz<0>
 1>          ]
 ```
 
-Just for completeness, it works on gcc (MingW) too:
+Just for completeness, it works on gcc (MingW) too, although it is a little harder to see...:
 
 ```
 $ gcc --version
