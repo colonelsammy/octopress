@@ -3,7 +3,6 @@ layout: post
 title: "Using Ruby Installer to install Redcarpet and Github-linguist with Octopress on Windows"
 date: 2013-09-30 17:32
 comments: false
-unpublished: true
 categories: [octopress, ruby, mingw, markdown, windows]
 keywords: ruby, octopress, redcarpet, github, markdown, mingw, windows
 description: Using Ruby Installer to install Redcarpet and Github-linguist syntax highlighting with Octopress on Windows
