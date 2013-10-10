@@ -1,11 +1,11 @@
 ---
 layout: post
-title: "Compile time FizzBuzz without Boost"
+title: "Deconstructing compile time FizzBuzz in C++ without Boost"
 date: 2013-10-09 05:53
 comments: false
 categories: [c++, templates, fizzbuzz, metaprogramming]
 keywords: c++, templates, fizzbuzz, boost, metaprogramming, mpl
-description: How to deconstruct compile time FizzBuzz without using Boost 
+description: How to deconstruct compile time FizzBuzz in C++ without using Boost 
 ---
 Several years ago [Adam Peterson published an article on how to implement FizzBuzz at cmpile time in C++](http://www.adampetersen.se/articles/fizzbuzz.htm "Adam Petersen's FizzBuzz"). The code was clever, but had a dependency on Boost and didn't go into great detail on how it worked, so I thought I'd write it again from scratch and try to explain my workings.  In this article I'm only going to show examples that would work for very small FizzBuzz sequences because, well, this is a learning exercise not a typing exercise!
 

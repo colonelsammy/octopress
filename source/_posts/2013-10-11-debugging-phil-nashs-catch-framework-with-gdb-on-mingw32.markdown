@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Debugging Phil Nash's CATCH framework with gdb on Mingw32"
-date: 2013-10-10 19:31
+date: 2013-10-11 19:31
 comments: false
 categories: [catch, c++, TDD]
 keywords: catch, c++, TDD
