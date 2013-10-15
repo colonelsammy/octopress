@@ -36,6 +36,7 @@ cp yaml.dll /mingw/bin
 cp libyaml.def libyaml.dll.a /mingw/lib
 cd ..
 ```
+<!-- more -->
 Download and build libffi:
 ```
 cd /build32

@@ -23,7 +23,7 @@ ruby dk.rb init
 ruby dk.rb install
 ```
 All of this follows the regular instructions for installing Ruby and the devkit.
-
+<!-- more -->
 # Install Python 2.7 #
 Next, install Python 2.7, if you havn't already - this is required for pygments.rb.  Make sure Python is in your path.  Check in a Mingw window:
 

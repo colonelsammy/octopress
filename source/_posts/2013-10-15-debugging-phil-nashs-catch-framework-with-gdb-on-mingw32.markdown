@@ -1,20 +1,20 @@
 ---
 layout: post
 title: "Debugging Phil Nash's CATCH framework with gdb on Mingw32"
-date: 2013-10-11 19:31
+date: 2013-10-15 19:31
 comments: false
-categories: [catch, c++, TDD]
-keywords: catch, c++, TDD
+categories: [catch, c++, TDD, gdb]
+keywords: catch, c++, TDD, gdb
 description: Debugging Phil Nash's CATCH framework with gdb on Mingw32
 ---
-So you have Mingw and you'd like to use Phil Nash's CATCH testing framework.  This article will go through some simple tests that we can construct and how to use it in that environment.
+So you have Mingw (or gdb on Linux) and you'd like to use Phil Nash's CATCH testing framework.  This article will go through some simple tests that we can construct and how to use it in that environment.
 
 Throughout this document I use a test project that I've setup in C:\Projects\catch - I'll use the Mingw directory /c/Projects/catch to access it.
 
 For testing, I was using the latest CATCH with Mingw32:
 
 ```
-MINGW32_NT-6.1 NOYESMAW7 1.0.17(0.48/3/2) 2011-04-24 23:39 i686 Msys
+MINGW32_NT-6.1 MACHINE 1.0.17(0.48/3/2) 2011-04-24 23:39 i686 Msys
 ```
 and Git:
 ```
@@ -125,7 +125,7 @@ For bug reporting instructions, please see:
 Reading symbols from c:\Projects\catch\catch\test.exe...done.
 (gdb)
 ```
-
+<!-- more -->
 Now you can run the test program and set it to break on the failure of test conditions:
 
 ```

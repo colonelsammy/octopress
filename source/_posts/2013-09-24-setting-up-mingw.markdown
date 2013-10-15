@@ -24,6 +24,7 @@ c:/mingw        /mingw
 c:/mingw/local32        /local32
 c:/mingw/build32        /build32
 ```
+<!-- more -->
 Create a directory for app install and a build directory (similar to [instructions for installing a base system](http://ingar.satgnu.net/devenv/mingw32/base.html "instructions for installing a base system"))
 ```
 mkdir /usr/local

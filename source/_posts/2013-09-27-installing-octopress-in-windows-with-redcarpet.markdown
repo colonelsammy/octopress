@@ -22,6 +22,7 @@ python --version
 ```
 
 We need some additional libraries for the Ruby Gem charlock_holmes.  I've built them both with static linking here so that we don't need to worry about where the DLLs might have gone.
+<!-- more -->
  
 Download and build ICU ([this post on compiling for qt](http://qt-project.org/wiki/Compiling-ICU-with-MinGW "Compiling ICU with Mingw") and [this post for compiling for OpenTTD](http://wiki.openttd.org/Compiling_on_Windows_using_MinGW "Compiling for OpenTTD") both help):
 ```
