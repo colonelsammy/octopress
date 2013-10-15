@@ -29,7 +29,7 @@ struct vector
 };
 ```
 <!-- more -->
->This is a simplified version of the mpl::vector example from C++ Template Metaprogramming. In particular note the typedef for 'self' and the typedefs for template parameters; we'll be using these in our helper templates. When we compile this with VS2010, we get this:
+This is a simplified version of the mpl::vector example from C++ Template Metaprogramming. In particular note the typedef for 'self' and the typedefs for template parameters; we'll be using these in our helper templates. When we compile this with VS2010, we get this:
 
 ```
 1>ClCompile:
