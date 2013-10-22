@@ -9,6 +9,8 @@ keywords:
 description: 
 ---
 
+{% img left /images/LogoSmall.png 120 %}
+
 I'm Malcolm Noyes and I'm a software developer/author.
 
 You can contact me [on twitter @ColonelSammy](http://twitter.com/colonelsammy "ColonelSammy @ twitter") or by email (mnoyes @ this domain).
