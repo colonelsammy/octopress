@@ -9,7 +9,9 @@ keywords:
 description: 
 ---
 
-{% img left /images/LogoSmall.png 120 %}
+<div style="float: left; margin: 10px;">
+  <img src="http://www.graoil.co.uk/images/LogoSmall.png?raw=true" alt="Logo" Title="Graoil Logo"/>
+</div>
 
 I'm Malcolm Noyes and I'm a software developer/author.
 
