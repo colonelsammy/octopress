@@ -14,13 +14,13 @@ Visual Studio 2010 has an option for creating C++ unit tests, but these tests ar
 2. Tests tend to be more complicated than needed - the Managed C++ compiler does not allow C++ value types as member variables for example, so these have to be kept as pointers and new/delete used.
 3. The debugger doesn't understand C++ types very well, so when in managed code it is often not possible to view object values. Whilst it could be argued that using TDD should avoid most uses of the debugger, sometimes it's inevitable.
 4. Sometimes the Managed C++ debugger gets a 'mind of its own' and decides to run a test to completion part way through debugging. This can be frustrating!
-5. Sometimes, the process vstest.executionengine.x86.exe gets left running after the tests have completed whcih prevents the any new builds from compiling as the DLL is held open by the executionengine.  There is [a bug report for this](https://connect.microsoft.com/VisualStudio/feedback/details/771994/vstest-executionengine-x86-exe-32-bit-not-closing-vs2012-11-0-50727-1-rtmrel "Bug report") but apparently no solution other than using taskkill as a pre-build event [http://stackoverflow.com/questions/13497168/vstest-executionengine-x86-exe-not-closing](http://stackoverflow.com/questions/13497168/vstest-executionengine-x86-exe-not-closing "Stack overflow answer")
+5. Sometimes, the process vstest.executionengine.x86.exe gets left running after the tests have completed whcih prevents the any new builds from compiling as the DLL is held open by the executionengine.  There is [a bug report for this](https://connect.microsoft.com/VisualStudio/feedback/details/771994/vstest-executionengine-x86-exe-32-bit-not-closing-vs2012-11-0-50727-1-rtmrel "Bug report") but apparently no solution other than using taskkill as a pre-build event ([http://stackoverflow.com/questions/13497168/vstest-executionengine-x86-exe-not-closing](http://stackoverflow.com/questions/13497168/vstest-executionengine-x86-exe-not-closing "Stack overflow answer"))
 
 In the absence of Native C++ unit tests (note: VS2012 has these - see later) I wanted to be able to share the code base between MSTest managed tests and native tests so that the build system could happily run MSTest on its managed build and I could run native tests using Catch.  This article describes my experiment to do this...
 
 # Differences in test philosophy #
 
-To persuade MSTest to look like Catch, we have to think about how the test needs to run.  MSTest **requires** a class, but Catch does not. Catch allows multiple runs through using SECTIONs, but this doesn't figure in MSTest. So my first attempt used a TEST_CASE as a 'class' wrapper and a SECTION for each test method.  This worked pretty well, except that it wasn't possible to specify individual tests to run (SECTIONs don't support tags).
+To persuade MSTest to look like Catch, we have to think about how the test needs to run.  MSTest **requires** a class, but Catch does not. Catch allows multiple runs by using SECTIONs, but this doesn't figure in MSTest. So my first attempt used a TEST_CASE as a 'class' wrapper and a SECTION for each test method.  This worked pretty well, except that it wasn't possible to specify individual tests to run (SECTIONs don't support tags).
 
 Looking at the tests that I wanted convert, they tended to follow a pattern:
 
@@ -93,7 +93,7 @@ namespace x
     TEST_CASE_METHOD(setup_wrapper, "Method1"); 
 }
 ```
-TEST_CASE_METHOD creates a class instance derived from setup_wrapper for each method, then runs the test in its own method. Unfortunately, not all my tests had TestInitiaize/TestCleanup methods, so I wanted to be able to specify those in a similar way to Native C++ tests. I tried several ways to do this, but ended up with a couple of macros, used like this:
+TEST_CASE_METHOD is a Catch macro that creates a class instance derived from setup_wrapper for each method, then runs the test in its own method. Unfortunately, not all my tests had TestInitiaize/TestCleanup methods, so I wanted to be able to specify those in a similar way to Native C++ tests. I tried several ways to do this, but ended up with a couple of macros, used like this:
 
 ```c++
     TEST_METHOD_INITIALIZE(setupMethodName)
@@ -161,7 +161,8 @@ C++ overload resolution will always prefer the non-templated `setup(int)` if it 
 
 # A final solution #
 
-Now I can embed all the nasty bits in macros and mangle some names to avoid duplicate definitions so that my final shared codebase looks like this (code for this project can be found here):    
+Now I can embed all the nasty bits in macros and mangle some names to avoid duplicate definitions so that my final shared codebase looks like this:
+    
 
 ```c++
 #include "stdafx.h"
@@ -303,7 +304,7 @@ In VS2010, you can create a C++ test project like this:
 
 This is always a managed C++ project and the macros above work fine.  In VS2012, there are two options....but I think I'll leave that for another post ;-) 
 
-Project used in this article:
+### <a name="projectzips"></a> Projects used in this article: ###
 
-[ManagedTestProject](http://www.graoil.co.uk/downloads/ManagedTestProject.zip "ManagedTestProject")
-[NativeTestLibrary](http://www.graoil.co.uk/downloads/NativeTestLibrary.zip "NativeTestLibrary")
+[ManagedTestProject](http://www.graoil.co.uk/downloads/MSTest/ManagedTestProject.zip "ManagedTestProject")
+[NativeTestLibrary](http://www.graoil.co.uk/downloads/MSTest/NativeTestLibrary.zip "NativeTestLibrary")
