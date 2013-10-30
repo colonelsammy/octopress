@@ -7,7 +7,7 @@ categories: [catch, c++, TDD, MSTest]
 keywords: catch, c++, TDD, MSTest, ManagedC++
 description: Replacing MSTest with Phil Nash's Catch framework for VS2012 native C++ tests
 ---
-In an earlier post I described how to share the same codebase for MSTest managed C++ code and Phil Nash's Catch framework.  In VS2012, there's an option for 'Native' C++ tests; this article describes how to use Catch to share the codebase for Native tests too.
+In [an earlier post I described how to share the same codebase for MSTest managed C++ code and Phil Nash's Catch framework]({% post_url 2013-10-28-replacing-mstest-with-phil-nashs-catch-framework-for-managed-tests %}).  In VS2012, there's an option for 'Native' C++ tests; this article describes how to use Catch to share the codebase for Native tests too.
 
 # VS2012 and Native C++ Tests #
 
